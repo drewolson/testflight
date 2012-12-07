@@ -29,6 +29,29 @@ func handler() http.Handler {
 		io.WriteString(w, person.Name+" created")
 	}))
 
+	m.Post("/post/form", http.HandlerFunc(func(w http.ResponseWriter, req *http.Request) {
+		req.ParseForm()
+		name := req.Form.Get("name")
+		w.WriteHeader(201)
+		io.WriteString(w, name+" created")
+	}))
+
+	m.Put("/put/json", http.HandlerFunc(func(w http.ResponseWriter, req *http.Request) {
+		person := &person{}
+		body, _ := ioutil.ReadAll(req.Body)
+		json.Unmarshal(body, person)
+		w.WriteHeader(200)
+		io.WriteString(w, person.Name+" updated")
+	}))
+
+	m.Del("/delete/json", http.HandlerFunc(func(w http.ResponseWriter, req *http.Request) {
+		person := &person{}
+		body, _ := ioutil.ReadAll(req.Body)
+		json.Unmarshal(body, person)
+		w.WriteHeader(200)
+		io.WriteString(w, person.Name+" deleted")
+	}))
+
 	return m
 }
 
@@ -43,9 +66,36 @@ func TestGet(t *testing.T) {
 
 func TestPostWithJson(t *testing.T) {
 	WithServer(handler(), func(r *Requester) {
-		response := r.Post("/post/json", "application/json", `{"name": "Drew"}`)
+		response := r.Post("/post/json", JSON, `{"name": "Drew"}`)
 
 		assert.Equal(t, 201, response.StatusCode)
 		assert.Equal(t, "Drew created", response.Body)
+	})
+}
+
+func TestPostWithForm(t *testing.T) {
+	WithServer(handler(), func(r *Requester) {
+		response := r.Post("/post/form", FORM_ENCODED, "name=Drew")
+
+		assert.Equal(t, 201, response.StatusCode)
+		assert.Equal(t, "Drew created", response.Body)
+	})
+}
+
+func TestPut(t *testing.T) {
+	WithServer(handler(), func(r *Requester) {
+		response := r.Put("/put/json", JSON, `{"name": "Drew"}`)
+
+		assert.Equal(t, 200, response.StatusCode)
+		assert.Equal(t, "Drew updated", response.Body)
+	})
+}
+
+func TestDelete(t *testing.T) {
+	WithServer(handler(), func(r *Requester) {
+		response := r.Delete("/delete/json", JSON, `{"name": "Drew"}`)
+
+		assert.Equal(t, 200, response.StatusCode)
+		assert.Equal(t, "Drew deleted", response.Body)
 	})
 }

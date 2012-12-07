@@ -7,6 +7,11 @@ import (
 	"strings"
 )
 
+const (
+	JSON         = "application/json"
+	FORM_ENCODED = "application/x-www-form-urlencoded"
+)
+
 type Response struct {
 	RawResponse *http.Response
 	Body        string
@@ -27,12 +32,26 @@ type Requester struct {
 }
 
 func (requester *Requester) Get(route string) *Response {
-	response, _ := http.Get(requester.url(route))
-	return newResponse(response)
+	return requester.performRequest("GET", route, "", "")
 }
 
-func (requester *Requester) Post(route string, contentType string, postBody string) *Response {
-	response, _ := http.Post(requester.url(route), contentType, strings.NewReader(postBody))
+func (requester *Requester) Post(route, contentType, body string) *Response {
+	return requester.performRequest("POST", route, contentType, body)
+}
+
+func (requester *Requester) Put(route, contentType, body string) *Response {
+	return requester.performRequest("PUT", route, contentType, body)
+}
+
+func (requester *Requester) Delete(route, contentType, body string) *Response {
+	return requester.performRequest("DELETE", route, contentType, body)
+}
+
+func (requester *Requester) performRequest(httpAction, route, contentType, body string) *Response {
+	request, _ := http.NewRequest(httpAction, requester.url(route), strings.NewReader(body))
+	request.Header.Add("Content-Type", contentType)
+	client := http.Client{}
+	response, _ := client.Do(request)
 	return newResponse(response)
 }
 
