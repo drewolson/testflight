@@ -7,6 +7,7 @@ import (
 	"io"
 	"io/ioutil"
 	"net/http"
+	"strings"
 	"testing"
 )
 
@@ -94,6 +95,18 @@ func TestPut(t *testing.T) {
 func TestDelete(t *testing.T) {
 	WithServer(handler(), func(r *Requester) {
 		response := r.Delete("/delete/json", JSON, `{"name": "Drew"}`)
+
+		assert.Equal(t, 200, response.StatusCode)
+		assert.Equal(t, "Drew deleted", response.Body)
+	})
+}
+
+func TestDo(t *testing.T) {
+	WithServer(handler(), func(r *Requester) {
+		request, _ := http.NewRequest("DELETE", "/delete/json", strings.NewReader(`{"name": "Drew"}`))
+		request.Header.Add("Content-Type", JSON)
+
+		response := r.Do(request)
 
 		assert.Equal(t, 200, response.StatusCode)
 		assert.Equal(t, "Drew deleted", response.Body)
