@@ -56,3 +56,23 @@ func TestPostWithForm(t *testing.T) {
 ```
 
 The testflight.Requester class has the following methods: Get, Post, Put, Delete and Do. Do accepts an *http.Request for times when you need more explicit control of our request. See testflight_test.go for more usage information.
+
+## Contributing
+
+First, run the tests.
+
+```bash
+mkdir testflight
+cd testflight
+
+export GOPATH=`pwd`
+
+go get github.com/drewolson/testflight
+go get github.com/kr/pretty
+go get github.com/bmizerany/assert
+go get github.com/bmizerany/pat
+
+go test github.com/drewolson/testflight
+```
+
+Now write new tests, fix them and send me a pull request!
