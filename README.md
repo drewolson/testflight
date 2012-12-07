@@ -1,5 +1,17 @@
 # testflight
 
+## Installation
+
+```bash
+go get github.com/drewolson/testflight
+```
+
+```go
+import "github.com/drewolson/testflight"
+```
+
+## Usage
+
 testflight makes it simple to test your http servers in Go. Suppose you're using [pat](https://github.com/bmizerany/pat) to create a simple http handler, like so:
 
 ```go
