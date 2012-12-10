@@ -37,7 +37,7 @@ Let's use testflight to test our handler. Keep in mind that testflight is doing 
 
 ```go
 func TestGet(t *testing.T) {
-	testflight.WithServer(Handler(), func(r *Requester) {
+	testflight.WithServer(Handler(), func(r *testflight.Requester) {
 		response := r.Get("/hello/drew")
 
 		assert.Equal(t, 200, response.StatusCode)
@@ -46,7 +46,7 @@ func TestGet(t *testing.T) {
 }
 
 func TestPostWithForm(t *testing.T) {
-	testflight.WithServer(handler(), func(r *Requester) {
+	testflight.WithServer(handler(), func(r *testflight.Requester) {
 		response := r.Post("/post/form", testflight.FORM_ENCODED, "name=Drew")
 
 		assert.Equal(t, 201, response.StatusCode)
