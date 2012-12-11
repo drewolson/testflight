@@ -46,7 +46,7 @@ func TestGet(t *testing.T) {
 }
 
 func TestPostWithForm(t *testing.T) {
-	testflight.WithServer(handler(), func(r *testflight.Requester) {
+	testflight.WithServer(Handler(), func(r *testflight.Requester) {
 		response := r.Post("/post/form", testflight.FORM_ENCODED, "name=Drew")
 
 		assert.Equal(t, 201, response.StatusCode)
