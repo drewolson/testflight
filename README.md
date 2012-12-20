@@ -1,5 +1,7 @@
 # testflight
 
+[![Build Status](https://travis-ci.org/drewolson/testflight.png?branch=master)](https://travis-ci.org/drewolson/testflight)
+
 ## Installation
 
 ```bash
