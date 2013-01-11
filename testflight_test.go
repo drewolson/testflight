@@ -1,6 +1,7 @@
 package testflight
 
 import (
+	"code.google.com/p/go.net/websocket"
 	"encoding/json"
 	"github.com/bmizerany/assert"
 	"github.com/bmizerany/pat"
@@ -54,6 +55,16 @@ func handler() http.Handler {
 	}))
 
 	return m
+}
+
+func websocketHandler() http.Handler {
+	mux := http.NewServeMux()
+
+	mux.Handle("/websocket", websocket.Handler(func(ws *websocket.Conn) {
+		websocket.Message.Send(ws, "Hello, world!")
+	}))
+
+	return mux
 }
 
 func TestGet(t *testing.T) {
@@ -110,5 +121,13 @@ func TestDo(t *testing.T) {
 
 		assert.Equal(t, 200, response.StatusCode)
 		assert.Equal(t, "Drew deleted", response.Body)
+	})
+}
+
+func TestWebSocket(t *testing.T) {
+	WithServer(websocketHandler(), func(r *Requester) {
+		ws := r.Websocket("/websocket")
+
+		assert.Equal(t, "Hello, world!", ws.Read())
 	})
 }
