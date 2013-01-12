@@ -14,6 +14,6 @@ func WithServer(handler http.Handler, context func(*Requester)) {
 	server := httptest.NewServer(handler)
 	defer server.Close()
 
-	requester := &Requester{server: server}
+	requester := &Requester{Server: server}
 	context(requester)
 }

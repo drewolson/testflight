@@ -1,7 +1,6 @@
 package testflight
 
 import (
-	"code.google.com/p/go.net/websocket"
 	"net/http"
 	"net/http/httptest"
 	"net/url"
@@ -9,7 +8,7 @@ import (
 )
 
 type Requester struct {
-	server *httptest.Server
+	Server *httptest.Server
 }
 
 func (requester *Requester) Get(route string) *Response {
@@ -34,11 +33,6 @@ func (requester *Requester) Do(request *http.Request) *Response {
 	return requester.sendRequest(request)
 }
 
-func (requester *Requester) Websocket(route string) *WebsocketResponse {
-	ws, _ := websocket.Dial(requester.websocketRoute(route), "", "http://localhost/")
-	return newWebsocketResponse(ws)
-}
-
 func (requester *Requester) performRequest(httpAction, route, contentType, body string) *Response {
 	request, _ := http.NewRequest(httpAction, requester.url(route), strings.NewReader(body))
 	request.Header.Add("Content-Type", contentType)
@@ -52,9 +46,5 @@ func (requester *Requester) sendRequest(request *http.Request) *Response {
 }
 
 func (requester *Requester) url(route string) string {
-	return "http://" + requester.server.Listener.Addr().String() + route
-}
-
-func (requester *Requester) websocketRoute(route string) string {
-	return "ws://" + requester.server.Listener.Addr().String() + route
+	return "http://" + requester.Server.Listener.Addr().String() + route
 }

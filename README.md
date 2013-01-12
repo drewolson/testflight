@@ -59,6 +59,46 @@ func TestPostWithForm(t *testing.T) {
 
 The testflight.Requester class has the following methods: Get, Post, Put, Delete and Do. Do accepts an *http.Request for times when you need more explicit control of our request. See testflight_test.go for more usage information.
 
+## Testing Websockets
+
+Testflight also allows you to perform full-stack testing of websockets. You'll want to import both the testflight and testflight/ws packages.
+
+```go
+import (
+  "github.com/drewolson/testflight"
+  "github.com/drewolson/testflight/ws"
+)
+```
+
+Now, let's make a handler with a websocket routeA.
+
+```go
+func Handler() http.Handler {
+	mux := http.NewServeMux()
+
+	mux.Handle("/websocket", websocket.Handler(func(ws *websocket.Conn) {
+		var name string
+		websocket.Message.Receive(ws, &name)
+		websocket.Message.Send(ws, "Hello, "+name)
+	}))
+
+	return mux
+}
+```
+
+Finally, let's write the test.
+
+```go
+func TestWebSocket(t *testing.T) {
+	testflight.WithServer(Handler(), func(r *testflight.Requester) {
+		connection := ws.Connect(r, "/websocket")
+
+		connection.WriteMessage("Drew")
+		assert.Equal(t, "Hello, Drew", connection.ReceiveMessage())
+	})
+}
+```
+
 ## Contributing
 
 First, run the tests.

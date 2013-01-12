@@ -125,12 +125,3 @@ func TestDo(t *testing.T) {
 		assert.Equal(t, "Drew deleted", response.Body)
 	})
 }
-
-func TestWebSocket(t *testing.T) {
-	WithServer(websocketHandler(), func(r *Requester) {
-		ws := r.Websocket("/websocket")
-
-		ws.WriteMessage("Drew")
-		assert.Equal(t, "Hello, Drew", ws.ReceiveMessage())
-	})
-}
