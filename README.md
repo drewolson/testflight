@@ -70,7 +70,7 @@ import (
 )
 ```
 
-Now, let's make a handler with a websocket routeA.
+Now, let's make a handler with a websocket route.
 
 ```go
 func Handler() http.Handler {
@@ -110,6 +110,7 @@ cd testflight
 export GOPATH=`pwd`
 
 go get github.com/drewolson/testflight
+go get code.google.com/p/go.net/websocket
 go get github.com/kr/pretty
 go get github.com/bmizerany/assert
 go get github.com/bmizerany/pat
