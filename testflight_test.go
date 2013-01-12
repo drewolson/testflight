@@ -61,7 +61,9 @@ func websocketHandler() http.Handler {
 	mux := http.NewServeMux()
 
 	mux.Handle("/websocket", websocket.Handler(func(ws *websocket.Conn) {
-		websocket.Message.Send(ws, "Hello, world!")
+		var name string
+		websocket.Message.Receive(ws, &name)
+		websocket.Message.Send(ws, "Hello, "+name)
 	}))
 
 	return mux
@@ -128,6 +130,7 @@ func TestWebSocket(t *testing.T) {
 	WithServer(websocketHandler(), func(r *Requester) {
 		ws := r.Websocket("/websocket")
 
-		assert.Equal(t, "Hello, world!", ws.Read())
+		ws.WriteMessage("Drew")
+		assert.Equal(t, "Hello, Drew", ws.ReceiveMessage())
 	})
 }
