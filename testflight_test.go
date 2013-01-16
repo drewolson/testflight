@@ -1,7 +1,6 @@
 package testflight
 
 import (
-	"code.google.com/p/go.net/websocket"
 	"encoding/json"
 	"github.com/bmizerany/assert"
 	"github.com/bmizerany/pat"
@@ -55,18 +54,6 @@ func handler() http.Handler {
 	}))
 
 	return m
-}
-
-func websocketHandler() http.Handler {
-	mux := http.NewServeMux()
-
-	mux.Handle("/websocket", websocket.Handler(func(ws *websocket.Conn) {
-		var name string
-		websocket.Message.Receive(ws, &name)
-		websocket.Message.Send(ws, "Hello, "+name)
-	}))
-
-	return mux
 }
 
 func TestGet(t *testing.T) {

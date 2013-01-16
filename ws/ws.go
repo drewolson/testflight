@@ -6,10 +6,14 @@ import (
 )
 
 func Connect(r *testflight.Requester, route string) *Connection {
-	connection, _ := websocket.Dial(websocketRoute(r, route), "", "http://localhost/")
+	connection, err := websocket.Dial(websocketRoute(r, route), "", "http://localhost/")
+	if err != nil {
+		panic(err)
+	}
+
 	return newConnection(connection)
 }
 
 func websocketRoute(r *testflight.Requester, route string) string {
-	return "ws://" + r.Server.Listener.Addr().String() + route
+	return "ws://" + r.Url(route)
 }

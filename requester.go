@@ -8,7 +8,7 @@ import (
 )
 
 type Requester struct {
-	Server *httptest.Server
+	server *httptest.Server
 }
 
 func (requester *Requester) Get(route string) *Response {
@@ -28,23 +28,39 @@ func (requester *Requester) Delete(route, contentType, body string) *Response {
 }
 
 func (requester *Requester) Do(request *http.Request) *Response {
-	fullUrl, _ := url.Parse(requester.url(request.URL.String()))
+	fullUrl, err := url.Parse(requester.httpUrl(request.URL.String()))
+	if err != nil {
+		panic(err)
+	}
+
 	request.URL = fullUrl
 	return requester.sendRequest(request)
 }
 
+func (requester *Requester) Url(route string) string {
+	return requester.server.Listener.Addr().String() + route
+}
+
 func (requester *Requester) performRequest(httpAction, route, contentType, body string) *Response {
-	request, _ := http.NewRequest(httpAction, requester.url(route), strings.NewReader(body))
+	request, err := http.NewRequest(httpAction, requester.httpUrl(route), strings.NewReader(body))
+	if err != nil {
+		panic(err)
+	}
+
 	request.Header.Add("Content-Type", contentType)
 	return requester.sendRequest(request)
 }
 
 func (requester *Requester) sendRequest(request *http.Request) *Response {
 	client := http.Client{}
-	response, _ := client.Do(request)
+	response, err := client.Do(request)
+	if err != nil {
+		panic(err)
+	}
+
 	return newResponse(response)
 }
 
-func (requester *Requester) url(route string) string {
-	return "http://" + requester.Server.Listener.Addr().String() + route
+func (requester *Requester) httpUrl(route string) string {
+	return "http://" + requester.Url(route)
 }
