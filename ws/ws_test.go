@@ -35,7 +35,6 @@ func websocketHandler() http.Handler {
 	return mux
 }
 
-
 func donothingwebsocketHandler() http.Handler {
 	mux := http.NewServeMux()
 
@@ -51,7 +50,7 @@ func TestWebSocket(t *testing.T) {
 	testflight.WithServer(websocketHandler(), func(r *testflight.Requester) {
 		connection := Connect(r, "/websocket")
 
-		connection.WriteMessage("Drew")
+		connection.SendMessage("Drew")
 		message, _ := connection.ReceiveMessage()
 		assert.Equal(t, "Hello, Drew", message)
 	})
@@ -62,7 +61,7 @@ func TestWebSocketReceiveMessageTimesOut(t *testing.T) {
 	testflight.WithServer(donothingwebsocketHandler(), func(r *testflight.Requester) {
 		connection := Connect(r, "/websocket")
 
-		connection.WriteMessage("Drew")
+		connection.SendMessage("Drew")
 		_, err := connection.ReceiveMessage()
 		assert.Equal(t, TimeoutError{}, *err)
 	})
@@ -73,9 +72,9 @@ func TestWebSocketTimeoutIsConfigurable(t *testing.T) {
 		connection := Connect(r, "/websocket")
 		connection.Timeout = 2 * time.Second
 
-		go func () {
+		go func() {
 			time.Sleep(1 * time.Second)
-			connection.WriteMessage("Drew")
+			connection.SendMessage("Drew")
 		}()
 
 		message, _ := connection.ReceiveMessage()
@@ -87,27 +86,27 @@ func TestWebSocketRecordsReceivedMessages(t *testing.T) {
 	testflight.WithServer(websocketHandler(), func(r *testflight.Requester) {
 		connection := Connect(r, "/websocket")
 
-		connection.WriteMessage("Drew")
+		connection.SendMessage("Drew")
 		connection.ReceiveMessage()
 		assert.Equal(t, "Hello, Drew", connection.ReceivedMessages[0])
 	})
 }
 
-func TestWebSocketFlushesMessages(t *testing.T){
+func TestWebSocketFlushesMessages(t *testing.T) {
 	testflight.WithServer(multiresponsewebsocketHandler(), func(r *testflight.Requester) {
 		connection := Connect(r, "/websocket")
 
-		connection.WriteMessage("Drew")
-		connection.WriteMessage("Bob")
+		connection.SendMessage("Drew")
+		connection.SendMessage("Bob")
 		connection.FlushMessages(2)
 		assert.Equal(t, 2, len(connection.ReceivedMessages))
 	})
 }
 
-func TestWebSocketTimesOutWhileFlushingMessages(t *testing.T){
+func TestWebSocketTimesOutWhileFlushingMessages(t *testing.T) {
 	testflight.WithServer(donothingwebsocketHandler(), func(r *testflight.Requester) {
 		connection := Connect(r, "/websocket")
-		connection.WriteMessage("Drew")
+		connection.SendMessage("Drew")
 
 		err := connection.FlushMessages(2)
 		assert.Equal(t, TimeoutError{}, *err)

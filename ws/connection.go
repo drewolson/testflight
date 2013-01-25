@@ -6,10 +6,10 @@ import (
 )
 
 type Connection struct {
-	RawConn *websocket.Conn
+	RawConn          *websocket.Conn
 	ReceivedMessages []string
-	Timeout time.Duration
-	unreadMessages []string
+	Timeout          time.Duration
+	unreadMessages   []string
 }
 
 func newConnection(conn *websocket.Conn) *Connection {
@@ -18,22 +18,6 @@ func newConnection(conn *websocket.Conn) *Connection {
 		Timeout: 1 * time.Second,
 	}
 	return connection
-}
-
-func (connection *Connection) ReceiveMessage() (string, *TimeoutError) {
-	messageChan := make(chan string)
-
-	go connection.receiveMessage(messageChan)
-
-	select {
-		case  <-time.After(connection.Timeout):
-			return "", &TimeoutError{}
-		case message := <-messageChan:
-			connection.ReceivedMessages = append(connection.ReceivedMessages, message)
-			return message, nil
-	}
-
-	return "", nil
 }
 
 func (connection *Connection) FlushMessages(number int) *TimeoutError {
@@ -46,12 +30,28 @@ func (connection *Connection) FlushMessages(number int) *TimeoutError {
 	return nil
 }
 
+func (connection *Connection) ReceiveMessage() (string, *TimeoutError) {
+	messageChan := make(chan string)
+
+	go connection.receiveMessage(messageChan)
+
+	select {
+	case <-time.After(connection.Timeout):
+		return "", &TimeoutError{}
+	case message := <-messageChan:
+		connection.ReceivedMessages = append(connection.ReceivedMessages, message)
+		return message, nil
+	}
+
+	return "", nil
+}
+
+func (connection *Connection) SendMessage(message string) {
+	websocket.Message.Send(connection.RawConn, message)
+}
+
 func (connection *Connection) receiveMessage(messageChan chan string) {
 	var message string
 	websocket.Message.Receive(connection.RawConn, &message)
 	messageChan <- message
-}
-
-func (connection *Connection) WriteMessage(message string) {
-	websocket.Message.Send(connection.RawConn, message)
 }

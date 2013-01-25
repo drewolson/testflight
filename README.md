@@ -90,13 +90,13 @@ Finally, let's write the test.
 
 ```go
 func TestWebSocket(t *testing.T) {
-	testflight.WithServer(Handler(), func(r *testflight.Requester) {
-		connection := ws.Connect(r, "/websocket")
+    testflight.WithServer(Handler(), func(r *testflight.Requester) {
+    connection := ws.Connect(r, "/websocket")
 
-		connection.WriteMessage("Drew")
+    connection.SendMessage("Drew")
     message, _ := connection.ReceiveMessage()
-		assert.Equal(t, "Hello, Drew", message)
-	})
+    assert.Equal(t, "Hello, Drew", message)
+  })
 }
 ```
 
