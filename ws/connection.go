@@ -9,7 +9,6 @@ type Connection struct {
 	RawConn          *websocket.Conn
 	ReceivedMessages []string
 	Timeout          time.Duration
-	unreadMessages   []string
 }
 
 func newConnection(conn *websocket.Conn) *Connection {
