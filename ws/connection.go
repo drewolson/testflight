@@ -36,6 +36,16 @@ func (connection *Connection) ReceiveMessage() (string, *TimeoutError) {
 	return "", nil
 }
 
+func (connection *Connection) FlushMessages(number int) *TimeoutError {
+	for i := 0; i < number; i++ {
+		_, err := connection.ReceiveMessage()
+		if err != nil {
+			return err
+		}
+	}
+	return nil
+}
+
 func (connection *Connection) receiveMessage(messageChan chan string) {
 	var message string
 	websocket.Message.Receive(connection.RawConn, &message)

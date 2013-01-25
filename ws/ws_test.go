@@ -9,6 +9,20 @@ import (
 	"time"
 )
 
+func multiresponsewebsocketHandler() http.Handler {
+	mux := http.NewServeMux()
+
+	mux.Handle("/websocket", websocket.Handler(func(ws *websocket.Conn) {
+		for i := 0; i < 2; i++ {
+			var name string
+			websocket.Message.Receive(ws, &name)
+			websocket.Message.Send(ws, "Hello, "+name)
+		}
+	}))
+
+	return mux
+}
+
 func websocketHandler() http.Handler {
 	mux := http.NewServeMux()
 
@@ -76,5 +90,26 @@ func TestWebSocketRecordsReceivedMessages(t *testing.T) {
 		connection.WriteMessage("Drew")
 		connection.ReceiveMessage()
 		assert.Equal(t, "Hello, Drew", connection.ReceivedMessages[0])
+	})
+}
+
+func TestWebSocketFlushesMessages(t *testing.T){
+	testflight.WithServer(multiresponsewebsocketHandler(), func(r *testflight.Requester) {
+		connection := Connect(r, "/websocket")
+
+		connection.WriteMessage("Drew")
+		connection.WriteMessage("Bob")
+		connection.FlushMessages(2)
+		assert.Equal(t, 2, len(connection.ReceivedMessages))
+	})
+}
+
+func TestWebSocketTimesOutWhileFlushingMessages(t *testing.T){
+	testflight.WithServer(donothingwebsocketHandler(), func(r *testflight.Requester) {
+		connection := Connect(r, "/websocket")
+		connection.WriteMessage("Drew")
+
+		err := connection.FlushMessages(2)
+		assert.Equal(t, TimeoutError{}, *err)
 	})
 }
