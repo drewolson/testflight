@@ -11,22 +11,6 @@ type Connection struct {
 	unreadMessages []string
 }
 
-type TooShortError struct {
-
-}
-
-type TimeoutError struct {
-
-}
-
-func (e TimeoutError) Error() string {
-	return "No Message Received in 30 seconds"
-}
-
-func (e TooShortError) Error() string {
-	return "Unread Messages too Short"
-}
-
 func newConnection(conn *websocket.Conn) *Connection {
 	connection := &Connection{
 		RawConn: conn,
