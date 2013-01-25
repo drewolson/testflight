@@ -6,6 +6,7 @@ import (
 	"github.com/drewolson/testflight"
 	"net/http"
 	"testing"
+	"time"
 )
 
 func websocketHandler() http.Handler {
@@ -50,6 +51,21 @@ func TestWebSocketReceiveMessageTimesOut(t *testing.T) {
 		connection.WriteMessage("Drew")
 		_, err := connection.ReceiveMessage()
 		assert.Equal(t, TimeoutError{}, *err)
+	})
+}
+
+func TestWebSocketTimeoutIsConfigurable(t *testing.T) {
+	testflight.WithServer(websocketHandler(), func(r *testflight.Requester) {
+		connection := Connect(r, "/websocket")
+		connection.Timeout = 2 * time.Second
+
+		go func () {
+			time.Sleep(1 * time.Second)
+			connection.WriteMessage("Drew")
+		}()
+
+		message, _ := connection.ReceiveMessage()
+		assert.Equal(t, "Hello, Drew", message)
 	})
 }
 

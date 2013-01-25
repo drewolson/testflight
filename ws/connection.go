@@ -8,52 +8,38 @@ import (
 type Connection struct {
 	RawConn *websocket.Conn
 	ReceivedMessages []string
+	Timeout time.Duration
 	unreadMessages []string
 }
 
 func newConnection(conn *websocket.Conn) *Connection {
 	connection := &Connection{
 		RawConn: conn,
+		Timeout: 1 * time.Second,
 	}
-	go connection.pollForMessages()
 	return connection
 }
 
-func (connection *Connection) pollForMessages() {
-	for {
-		message := connection.receiveMessage()
-		if message != "" {
-			connection.ReceivedMessages = append(connection.ReceivedMessages, message)
-			connection.unreadMessages = append(connection.unreadMessages, message)
-		}
-	}
-}
-
 func (connection *Connection) ReceiveMessage() (string, *TimeoutError) {
-	for i := 0; i <= 1; i++ {
-		message, poperr := connection.popUnreadMessage()
-		if poperr == nil {
-			return message, nil
-		}
-		time.Sleep(1 * time.Second)
-	}
-	return "", &TimeoutError{}
-}
+	messageChan := make(chan string)
 
-func(connection *Connection) popUnreadMessage() (string, *TooShortError) {
-	if len(connection.unreadMessages) < 1 {
-		return "", &TooShortError{}
-	} else {
-		message := connection.unreadMessages[0]
-		connection.unreadMessages = connection.unreadMessages[1:]
-		return message, nil
+	go connection.receiveMessage(messageChan)
+
+	select {
+		case  <-time.After(connection.Timeout):
+			return "", &TimeoutError{}
+		case message := <-messageChan:
+			connection.ReceivedMessages = append(connection.ReceivedMessages, message)
+			return message, nil
 	}
+
 	return "", nil
 }
 
-func (connection *Connection) receiveMessage() (message string) {
+func (connection *Connection) receiveMessage(messageChan chan string) {
+	var message string
 	websocket.Message.Receive(connection.RawConn, &message)
-	return message
+	messageChan <- message
 }
 
 func (connection *Connection) WriteMessage(message string) {
