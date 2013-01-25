@@ -65,8 +65,8 @@ Testflight also allows you to perform full-stack testing of websockets. You'll w
 
 ```go
 import (
-  "github.com/drewolson/testflight"
-  "github.com/drewolson/testflight/ws"
+    "github.com/drewolson/testflight"
+    "github.com/drewolson/testflight/ws"
 )
 ```
 
@@ -91,12 +91,12 @@ Finally, let's write the test.
 ```go
 func TestWebSocket(t *testing.T) {
     testflight.WithServer(Handler(), func(r *testflight.Requester) {
-    connection := ws.Connect(r, "/websocket")
+        connection := ws.Connect(r, "/websocket")
 
-    connection.SendMessage("Drew")
-    message, _ := connection.ReceiveMessage()
-    assert.Equal(t, "Hello, Drew", message)
-  })
+        connection.SendMessage("Drew")
+        message, _ := connection.ReceiveMessage()
+        assert.Equal(t, "Hello, Drew", message)
+    })
 }
 ```
 
