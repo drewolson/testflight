@@ -46,10 +46,8 @@ func (connection *Connection) pollForMessages() {
 }
 
 func (connection *Connection) ReceiveMessage() (string, *TimeoutError) {
-	var poperr *TooShortError
-	var message string
 	for i := 0; i <= 1; i++ {
-		message, poperr = connection.popUnreadMessage()
+		message, poperr := connection.popUnreadMessage()
 		if poperr == nil {
 			return message, nil
 		}
@@ -69,8 +67,7 @@ func(connection *Connection) popUnreadMessage() (string, *TooShortError) {
 	return "", nil
 }
 
-func (connection *Connection) receiveMessage() string {
-	var message string
+func (connection *Connection) receiveMessage() (message string) {
 	websocket.Message.Receive(connection.RawConn, &message)
 	return message
 }
