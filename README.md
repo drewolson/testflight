@@ -94,7 +94,8 @@ func TestWebSocket(t *testing.T) {
 		connection := ws.Connect(r, "/websocket")
 
 		connection.WriteMessage("Drew")
-		assert.Equal(t, "Hello, Drew", connection.ReceiveMessage())
+    message, _ := connection.ReceiveMessage()
+		assert.Equal(t, "Hello, Drew", message)
 	})
 }
 ```
