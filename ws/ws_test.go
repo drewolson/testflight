@@ -9,7 +9,7 @@ import (
 	"time"
 )
 
-func multiresponsewebsocketHandler() http.Handler {
+func multiResponseHandler() http.Handler {
 	mux := http.NewServeMux()
 
 	mux.Handle("/websocket", websocket.Handler(func(ws *websocket.Conn) {
@@ -35,7 +35,7 @@ func websocketHandler() http.Handler {
 	return mux
 }
 
-func donothingwebsocketHandler() http.Handler {
+func doNothingHandler() http.Handler {
 	mux := http.NewServeMux()
 
 	mux.Handle("/websocket", websocket.Handler(func(ws *websocket.Conn) {
@@ -58,7 +58,7 @@ func TestWebSocket(t *testing.T) {
 
 func TestWebSocketReceiveMessageTimesOut(t *testing.T) {
 
-	testflight.WithServer(donothingwebsocketHandler(), func(r *testflight.Requester) {
+	testflight.WithServer(doNothingHandler(), func(r *testflight.Requester) {
 		connection := Connect(r, "/websocket")
 
 		connection.SendMessage("Drew")
@@ -93,7 +93,7 @@ func TestWebSocketRecordsReceivedMessages(t *testing.T) {
 }
 
 func TestWebSocketFlushesMessages(t *testing.T) {
-	testflight.WithServer(multiresponsewebsocketHandler(), func(r *testflight.Requester) {
+	testflight.WithServer(multiResponseHandler(), func(r *testflight.Requester) {
 		connection := Connect(r, "/websocket")
 
 		connection.SendMessage("Drew")
@@ -104,7 +104,7 @@ func TestWebSocketFlushesMessages(t *testing.T) {
 }
 
 func TestWebSocketTimesOutWhileFlushingMessages(t *testing.T) {
-	testflight.WithServer(donothingwebsocketHandler(), func(r *testflight.Requester) {
+	testflight.WithServer(doNothingHandler(), func(r *testflight.Requester) {
 		connection := Connect(r, "/websocket")
 		connection.SendMessage("Drew")
 
