@@ -19,6 +19,10 @@ func newConnection(conn *websocket.Conn) *Connection {
 	return connection
 }
 
+func (connection *Connection) Close() {
+	connection.RawConn.Close()
+}
+
 func (connection *Connection) FlushMessages(number int) *TimeoutError {
 	for i := 0; i < number; i++ {
 		_, err := connection.ReceiveMessage()

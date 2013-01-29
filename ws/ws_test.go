@@ -9,6 +9,25 @@ import (
 	"time"
 )
 
+func pollingHandler() http.Handler {
+	mux := http.NewServeMux()
+
+	mux.Handle("/websocket", websocket.Handler(func(ws *websocket.Conn) {
+		for {
+			var name string
+			err := websocket.Message.Receive(ws, &name)
+
+			if err != nil {
+				break
+			}
+
+			websocket.Message.Send(ws, "Hello, "+name)
+		}
+	}))
+
+	return mux
+}
+
 func multiResponseHandler() http.Handler {
 	mux := http.NewServeMux()
 
@@ -99,6 +118,18 @@ func TestWebSocketFlushesMessages(t *testing.T) {
 		connection.SendMessage("Drew")
 		connection.SendMessage("Bob")
 		connection.FlushMessages(2)
+		assert.Equal(t, 2, len(connection.ReceivedMessages))
+	})
+}
+
+func TestClosingConnections(t *testing.T) {
+	testflight.WithServer(pollingHandler(), func(r *testflight.Requester) {
+		connection := Connect(r, "/websocket")
+
+		connection.SendMessage("Drew")
+		connection.SendMessage("Bob")
+		connection.FlushMessages(2)
+		connection.Close()
 		assert.Equal(t, 2, len(connection.ReceivedMessages))
 	})
 }
