@@ -5,3 +5,4 @@ install:
   - go get github.com/bmizerany/assert
   - go get github.com/bmizerany/pat
   - go get github.com/kr/pretty
+  - go get github.com/drewolson/testflight
