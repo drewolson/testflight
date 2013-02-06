@@ -1,4 +1,5 @@
 language: go
+script: go test -v ./...
 install:
   - go get code.google.com/p/go.net/websocket
   - go get github.com/bmizerany/assert
