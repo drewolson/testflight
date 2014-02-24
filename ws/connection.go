@@ -52,8 +52,6 @@ func (connection *Connection) ReceiveMessage() (string, *TimeoutError) {
 			}
 		}
 	}
-
-	return "", nil
 }
 
 func (connection *Connection) SendMessage(message string) {
