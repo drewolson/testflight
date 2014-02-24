@@ -38,12 +38,19 @@ func (connection *Connection) ReceiveMessage() (string, *TimeoutError) {
 
 	go connection.receiveMessage(messageChan)
 
-	select {
-	case <-time.After(connection.Timeout):
-		return "", &TimeoutError{}
-	case message := <-messageChan:
-		connection.ReceivedMessages = append(connection.ReceivedMessages, message)
-		return message, nil
+	timeout := time.After(connection.Timeout)
+
+	for {
+		select {
+		case <-timeout:
+			return "", &TimeoutError{}
+		case message := <-messageChan:
+			connection.ReceivedMessages = append(connection.ReceivedMessages, message)
+
+			if message != "" {
+				return message, nil
+			}
+		}
 	}
 
 	return "", nil
