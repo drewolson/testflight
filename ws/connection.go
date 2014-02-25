@@ -40,18 +40,18 @@ func (connection *Connection) ReceiveMessage() (string, *TimeoutError) {
 
 	timeout := time.After(connection.Timeout)
 
-	for {
-		select {
-		case <-timeout:
-			return "", &TimeoutError{}
-		case message := <-messageChan:
-			connection.ReceivedMessages = append(connection.ReceivedMessages, message)
+	select {
+	case <-timeout:
+		return "", &TimeoutError{}
+	case message := <-messageChan:
+		connection.ReceivedMessages = append(connection.ReceivedMessages, message)
 
-			if message != "" {
-				return message, nil
-			}
+		if message != "" {
+			return message, nil
 		}
 	}
+
+	return "", nil
 }
 
 func (connection *Connection) SendMessage(message string) {
@@ -59,7 +59,15 @@ func (connection *Connection) SendMessage(message string) {
 }
 
 func (connection *Connection) receiveMessage(messageChan chan string) {
-	var message string
-	websocket.Message.Receive(connection.RawConn, &message)
-	messageChan <- message
+	for {
+		var message string
+		websocket.Message.Receive(connection.RawConn, &message)
+
+		if message != "" {
+			messageChan <- message
+			return
+		} else {
+			time.Sleep(100 * time.Millisecond)
+		}
+	}
 }
