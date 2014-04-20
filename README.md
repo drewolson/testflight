@@ -105,18 +105,10 @@ func TestWebSocket(t *testing.T) {
 First, run the tests.
 
 ```bash
-mkdir testflight
-cd testflight
+git clone git@github.com:drewolson/testflight.git $GOPATH/src/github.com/drewolson/testflight
+cd $GOPATH/src/github.com/drewolson/testflight
 
-export GOPATH=`pwd`
-
-go get github.com/drewolson/testflight
-go get code.google.com/p/go.net/websocket
-go get github.com/kr/pretty
-go get github.com/bmizerany/assert
-go get github.com/bmizerany/pat
-
-go test github.com/drewolson/testflight
+make test
 ```
 
 Now write new tests, fix them and send me a pull request!
