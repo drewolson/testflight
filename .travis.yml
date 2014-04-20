@@ -3,10 +3,4 @@ go:
   - 1.0
   - 1.1
   - 1.2
-script: go test -v ./...
-install:
-  - go get code.google.com/p/go.net/websocket
-  - go get github.com/bmizerany/assert
-  - go get github.com/bmizerany/pat
-  - go get github.com/kr/pretty
-  - go get github.com/drewolson/testflight
+script: make test
