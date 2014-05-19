@@ -62,6 +62,7 @@ func TestGet(t *testing.T) {
 
 		assert.Equal(t, 200, response.StatusCode)
 		assert.Equal(t, "hello, drew", response.Body)
+		assert.Equal(t, []byte("hello, drew"), response.RawBody)
 	})
 }
 
