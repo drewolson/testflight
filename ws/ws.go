@@ -1,8 +1,8 @@
 package ws
 
 import (
-	"code.google.com/p/go.net/websocket"
 	"github.com/drewolson/testflight"
+	"golang.org/x/net/websocket"
 )
 
 func Connect(r *testflight.Requester, route string) *Connection {

@@ -1,9 +1,9 @@
 package ws
 
 import (
-	"code.google.com/p/go.net/websocket"
 	"github.com/bmizerany/assert"
 	"github.com/drewolson/testflight"
+	"golang.org/x/net/websocket"
 	"net/http"
 	"testing"
 	"time"
