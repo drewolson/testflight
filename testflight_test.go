@@ -2,13 +2,14 @@ package testflight
 
 import (
 	"encoding/json"
-	"github.com/bmizerany/assert"
-	"github.com/bmizerany/pat"
 	"io"
 	"io/ioutil"
 	"net/http"
 	"strings"
 	"testing"
+
+	"github.com/bmizerany/assert"
+	"github.com/bmizerany/pat"
 )
 
 type person struct {

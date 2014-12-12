@@ -1,8 +1,9 @@
 package ws
 
 import (
-	"golang.org/x/net/websocket"
 	"time"
+
+	"golang.org/x/net/websocket"
 )
 
 type Connection struct {

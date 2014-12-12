@@ -1,12 +1,13 @@
 package ws
 
 import (
-	"github.com/bmizerany/assert"
-	"github.com/drewolson/testflight"
-	"golang.org/x/net/websocket"
 	"net/http"
 	"testing"
 	"time"
+
+	"github.com/bmizerany/assert"
+	"github.com/drewolson/testflight"
+	"golang.org/x/net/websocket"
 )
 
 func pollingHandler() http.Handler {
