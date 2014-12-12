@@ -57,7 +57,7 @@ func TestPostWithForm(t *testing.T) {
 }
 ```
 
-The testflight.Requester class has the following methods: Get, Post, Put, Delete and Do. Do accepts an *http.Request for times when you need more explicit control of our request. See testflight_test.go for more usage information.
+The testflight.Requester struct has the following methods: Get, Post, Put, Delete and Do. Do accepts an *http.Request for times when you need more explicit control of our request. See testflight_test.go for more usage information.
 
 ## Testing Websockets
 
