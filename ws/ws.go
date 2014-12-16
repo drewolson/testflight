@@ -2,6 +2,7 @@ package ws
 
 import (
 	"github.com/drewolson/testflight"
+
 	"golang.org/x/net/websocket"
 )
 
