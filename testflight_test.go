@@ -46,17 +46,13 @@ func handler() http.Handler {
 		io.WriteString(w, person.Name+" updated")
 	}))
 
-	/* NO RUN TEST FOR MISSED PATCH METHOD IN PAT
-	   https://github.com/bmizerany/pat/pull/26
-
-	m.Patch("/patch/json", http.HandlerFunc(func(w http.ResponseWriter, req *http.Request) {
+	m.Add("PATCH", "/patch/json", http.HandlerFunc(func(w http.ResponseWriter, req *http.Request) {
 		person := &person{}
 		body, _ := ioutil.ReadAll(req.Body)
 		json.Unmarshal(body, person)
 		w.WriteHeader(200)
 		io.WriteString(w, person.Name+" updated")
 	}))
-	*/
 
 	m.Del("/delete/json", http.HandlerFunc(func(w http.ResponseWriter, req *http.Request) {
 		person := &person{}
@@ -106,18 +102,14 @@ func TestPut(t *testing.T) {
 	})
 }
 
-/* NO RUN TEST FOR MISSED PATCH METHOD IN PAT
-   https://github.com/bmizerany/pat/pull/26
-
 func TestPatch(t *testing.T) {
 	WithServer(handler(), func(r *Requester) {
-		response := r.Patch("/put/json", JSON, `{"name": "Yograterol"}`)
+		response := r.Patch("/patch/json", JSON, `{"name": "Yograterol"}`)
 
 		assert.Equal(t, 200, response.StatusCode)
 		assert.Equal(t, "Yograterol updated", response.Body)
 	})
 }
-*/
 
 func TestDelete(t *testing.T) {
 	WithServer(handler(), func(r *Requester) {
