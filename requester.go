@@ -23,6 +23,10 @@ func (requester *Requester) Put(route, contentType, body string) *Response {
 	return requester.performRequest("PUT", route, contentType, body)
 }
 
+func (requester *Requester) Patch(route, contentType, body string) *Response {
+	return requester.performRequest("PATCH", route, contentType, body)
+}
+
 func (requester *Requester) Delete(route, contentType, body string) *Response {
 	return requester.performRequest("DELETE", route, contentType, body)
 }
