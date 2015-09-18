@@ -9,6 +9,7 @@ import (
 
 type Requester struct {
 	server *httptest.Server
+	header http.Header
 }
 
 func (requester *Requester) Get(route string) *Response {
@@ -45,6 +46,14 @@ func (requester *Requester) Url(route string) string {
 	return requester.server.Listener.Addr().String() + route
 }
 
+func (requester *Requester) AddHeader(name string, value string) {
+	if requester.header == nil {
+		requester.header = http.Header{}
+	}
+
+	requester.header[name] = append(requester.header[name], value)
+}
+
 func (requester *Requester) performRequest(httpAction, route, contentType, body string) *Response {
 	request, err := http.NewRequest(httpAction, requester.httpUrl(route), strings.NewReader(body))
 	if err != nil {
@@ -52,6 +61,9 @@ func (requester *Requester) performRequest(httpAction, route, contentType, body 
 	}
 
 	request.Header.Add("Content-Type", contentType)
+	for name, value := range requester.header {
+		request.Header.Add(name, strings.Join(value, ", "))
+	}
 	return requester.sendRequest(request)
 }
 

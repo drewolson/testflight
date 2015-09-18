@@ -23,6 +23,10 @@ func handler() http.Handler {
 		io.WriteString(w, "hello, "+req.URL.Query().Get(":name"))
 	}))
 
+	m.Get("/header/:name", http.HandlerFunc(func(w http.ResponseWriter, req *http.Request) {
+		io.WriteString(w, req.Header.Get(req.URL.Query().Get(":name")))
+	}))
+
 	m.Post("/post/json", http.HandlerFunc(func(w http.ResponseWriter, req *http.Request) {
 		person := &person{}
 		body, _ := ioutil.ReadAll(req.Body)
@@ -72,6 +76,17 @@ func TestGet(t *testing.T) {
 		assert.Equal(t, 200, response.StatusCode)
 		assert.Equal(t, "hello, drew", response.Body)
 		assert.Equal(t, []byte("hello, drew"), response.RawBody)
+	})
+}
+
+func TestGetWithHeader(t *testing.T) {
+	WithServer(handler(), func(r *Requester) {
+		headerName := "Access-Control-Allow-Origin"
+		r.AddHeader(headerName, "example.com")
+		response := r.Get("/header/" + headerName)
+
+		assert.Equal(t, 200, response.StatusCode)
+		assert.Equal(t, "example.com", response.Body)
 	})
 }
 

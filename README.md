@@ -57,6 +57,22 @@ func TestPostWithForm(t *testing.T) {
 }
 ```
 
+You can also add request headers:
+
+```go
+func TestGet(t *testing.T) {
+  testflight.WithServer(Handler(), func(r *testflight.Requester) {
+    r.AddHeader("Origin", "http://example.com")
+    response := r.Get("/hello/drew")
+
+    assert.Equal(
+      t, "http://example.com",
+      response.RawResponse.Header["Access-Control-Allow-Origin"],
+    )
+  })
+}
+```
+
 The testflight.Requester struct has the following methods: Get, Post, Put, Delete and Do. Do accepts an *http.Request for times when you need more explicit control of your request. See testflight_test.go for more usage information.
 
 ## Testing Websockets
