@@ -120,6 +120,16 @@ func TestDelete(t *testing.T) {
 	})
 }
 
+func TestResponeHeaders(t *testing.T) {
+	WithServer(handler(), func(r *Requester) {
+		response := r.Get("/hello/again_drew")
+		assert.Equal(t, 200, response.StatusCode)
+		header := response.Header
+		assert.NotEqual(t, nil, header)
+		assert.Equal(t, "text/plain; charset=utf-8", header.Get("Content-Type"))
+	})
+}
+
 func TestDo(t *testing.T) {
 	WithServer(handler(), func(r *Requester) {
 		request, _ := http.NewRequest("DELETE", "/delete/json", strings.NewReader(`{"name": "Drew"}`))

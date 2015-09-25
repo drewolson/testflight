@@ -10,6 +10,7 @@ type Response struct {
 	RawBody     []byte
 	RawResponse *http.Response
 	StatusCode  int
+	Header      http.Header
 }
 
 func newResponse(response *http.Response) *Response {
@@ -19,5 +20,6 @@ func newResponse(response *http.Response) *Response {
 		RawBody:     body,
 		RawResponse: response,
 		StatusCode:  response.StatusCode,
+		Header:      response.Header,
 	}
 }
