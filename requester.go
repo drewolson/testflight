@@ -1,8 +1,6 @@
 package testflight
 
 import (
-	"fmt"
-	"log"
 	"net/http"
 	"net/http/httptest"
 	"net/url"
