@@ -1,4 +1,8 @@
 language: go
 go:
-  - 1.7
-script: make test
+  - 1.9.2
+before_script:
+  - go get -u github.com/golang/dep/cmd/dep
+  - $GOPATH/bin/dep ensure
+script:
+  - go test -v ./...
