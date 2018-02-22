@@ -104,6 +104,10 @@ func TestWebSocket(t *testing.T) {
 
 First, install [vgo](https://godoc.org/golang.org/x/vgo)
 
+```bash
+go get -u golang.org/x/vgo
+```
+
 Next, run the tests.
 
 ```bash
