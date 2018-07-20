@@ -102,16 +102,12 @@ func TestWebSocket(t *testing.T) {
 
 ## Contributing
 
-First, install [vgo](https://godoc.org/golang.org/x/vgo)
+Requires go `>= 1.11`.
+
+Run the tests.
 
 ```bash
-go get -u golang.org/x/vgo
-```
-
-Next, run the tests.
-
-```bash
-vgo test -v ./...
+go test -v ./...
 ```
 
 Now write new tests, fix them and send me a pull request!
