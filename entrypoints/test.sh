@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -e
 
-ginkgo -r --randomizeAllSpecs --randomizeSuites --trace --progress --succinct .
+ginkgo -r --keepGoing --randomizeAllSpecs --randomizeSuites --trace --progress --succinct .
 
 # then watch if asked to
 if [[ $1 = "watch" ]] || [[ $1 = "-w" ]]; then
