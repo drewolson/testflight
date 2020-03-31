@@ -9,6 +9,15 @@ import (
 
 type Requester struct {
 	server *httptest.Server
+	Client *http.Client
+}
+
+func (requester *Requester) client() *http.Client {
+	if requester.Client == nil {
+		requester.Client = &http.Client{}
+	}
+
+	return requester.Client
 }
 
 func (requester *Requester) Get(route string) *Response {
@@ -56,7 +65,7 @@ func (requester *Requester) performRequest(httpAction, route, contentType, body 
 }
 
 func (requester *Requester) sendRequest(request *http.Request) *Response {
-	client := http.Client{}
+	client := requester.client()
 	response, err := client.Do(request)
 	if err != nil {
 		panic(err)

@@ -120,7 +120,7 @@ func TestDelete(t *testing.T) {
 	})
 }
 
-func TestResponeHeaders(t *testing.T) {
+func TestResponseHeaders(t *testing.T) {
 	WithServer(handler(), func(r *Requester) {
 		response := r.Get("/hello/again_drew")
 		assert.Equal(t, 200, response.StatusCode)
