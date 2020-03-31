@@ -17,7 +17,6 @@ environment() {
   check_github_access_token
   export AWS_DEFAULT_REGION=us-east-1
   export GIT_VER=$(git rev-parse --short HEAD)
-  export COMPOSE_NETWORK=${SERVICE_NAME}_${GIT_VER}
 
   if [[ ${ON_JENKINS} == true ]]; then
       echo "On Jenkins! Not doing any environment setup"
@@ -78,7 +77,6 @@ cmd_build() {
 
   docker build \
       --build-arg GITHUB_ACCESS_TOKEN=${GITHUB_ACCESS_TOKEN} \
-      --build-arg SERVICE_NAME=${SERVICE_NAME} \
       -t ${DOCKER_TAG} \
       -t ${DOCKER_ENV_TAG} .
 }
