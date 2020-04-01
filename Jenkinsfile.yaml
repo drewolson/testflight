@@ -1,0 +1,7 @@
+---
+deploy: false
+push: false
+
+build:
+    build_command: ./main.sh build
+    test_command: ./main.sh test

@@ -5,11 +5,11 @@
 ## Installation
 
 ```bash
-go get github.com/drewolson/testflight
+go get github.com/calm/testflight
 ```
 
 ```go
-import "github.com/drewolson/testflight"
+import "github.com/calm/testflight"
 ```
 
 ## Usage
@@ -65,8 +65,8 @@ Testflight also allows you to perform full-stack testing of websockets. You'll w
 
 ```go
 import (
-    "github.com/drewolson/testflight"
-    "github.com/drewolson/testflight/ws"
+    "github.com/calm/testflight"
+    "github.com/calm/testflight/ws"
 )
 ```
 

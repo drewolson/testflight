@@ -31,14 +31,19 @@ func (requester *Requester) Delete(route, contentType, body string) *Response {
 	return requester.performRequest("DELETE", route, contentType, body)
 }
 
-func (requester *Requester) Do(request *http.Request) *Response {
+func (requester *Requester) DoWithClient(request *http.Request, client http.Client) *Response {
 	fullUrl, err := url.Parse(requester.httpUrl(request.URL.String()))
 	if err != nil {
 		panic(err)
 	}
 
 	request.URL = fullUrl
-	return requester.sendRequest(request)
+	return requester.sendRequestWithClient(request, client)
+}
+
+func (requester *Requester) Do(request *http.Request) *Response {
+	client := http.Client{}
+	return requester.DoWithClient(request, client)
 }
 
 func (requester *Requester) Url(route string) string {
@@ -57,6 +62,10 @@ func (requester *Requester) performRequest(httpAction, route, contentType, body 
 
 func (requester *Requester) sendRequest(request *http.Request) *Response {
 	client := http.Client{}
+	return requester.sendRequestWithClient(request, client)
+}
+
+func (requester *Requester) sendRequestWithClient(request *http.Request, client http.Client) *Response {
 	response, err := client.Do(request)
 	if err != nil {
 		panic(err)

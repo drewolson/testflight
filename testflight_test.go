@@ -5,6 +5,7 @@ import (
 	"io"
 	"io/ioutil"
 	"net/http"
+	"net/url"
 	"strings"
 	"testing"
 
@@ -60,6 +61,11 @@ func handler() http.Handler {
 		json.Unmarshal(body, person)
 		w.WriteHeader(200)
 		io.WriteString(w, person.Name+" deleted")
+	}))
+
+	m.Get("/redirect", http.HandlerFunc(func(w http.ResponseWriter, req *http.Request) {
+		req.URL, _ = url.Parse("http://www.redirected.com")
+		http.Redirect(w, req, req.URL.String(), 303)
 	}))
 
 	return m
@@ -120,7 +126,7 @@ func TestDelete(t *testing.T) {
 	})
 }
 
-func TestResponeHeaders(t *testing.T) {
+func TestResponseHeaders(t *testing.T) {
 	WithServer(handler(), func(r *Requester) {
 		response := r.Get("/hello/again_drew")
 		assert.Equal(t, 200, response.StatusCode)
@@ -139,5 +145,21 @@ func TestDo(t *testing.T) {
 
 		assert.Equal(t, 200, response.StatusCode)
 		assert.Equal(t, "Drew deleted", response.Body)
+	})
+}
+
+func TestDoWithClient(t *testing.T) {
+	WithServer(handler(), func(r *Requester) {
+		request, _ := http.NewRequest("GET", "/redirect", nil)
+		request.Header.Add("Content-Type", JSON)
+		client := http.Client{
+			CheckRedirect: func(req *http.Request, via []*http.Request) error {
+				return http.ErrUseLastResponse
+			},
+		}
+		response := r.DoWithClient(request, client)
+
+		assert.Equal(t, 303, response.StatusCode)
+		assert.Equal(t, "http://www.redirected.com", response.Header.Get("Location"))
 	})
 }
