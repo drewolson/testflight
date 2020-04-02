@@ -50,6 +50,15 @@ func (requester *Requester) Url(route string) string {
 	return requester.server.Listener.Addr().String() + route
 }
 
+func (requester *Requester) PostForm(route string, data url.Values) *Response {
+	response, err := http.PostForm(requester.httpUrl(route), data)
+	if err != nil {
+		panic(err)
+	}
+
+	return newResponse(response)
+}
+
 func (requester *Requester) performRequest(httpAction, route, contentType, body string) *Response {
 	request, err := http.NewRequest(httpAction, requester.httpUrl(route), strings.NewReader(body))
 	if err != nil {
